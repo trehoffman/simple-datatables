@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 /**
  * Default configuration
  * @typ {Object}
@@ -9,7 +10,7 @@ export const defaultConfig = {
     // Pagination
     paging: true,
     perPage: 10,
-    perPageSelect: [5, 10, 15, 20, 25],
+    perPageSelect: [5, 10, 15, 20, 25, -1],
     nextPrev: true,
     firstLast: false,
     prevText: "&lsaquo;",

@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 import {Rows} from "./rows"
 import {Columns} from "./columns"
 import {dataToTable} from "./table"
@@ -48,6 +49,12 @@ export class DataTable {
             ) {
                 this.options.sortable = false
             }
+        }
+
+        // try to get saved perPage option if one is not explicity set
+        if (!options.perPage) {
+            const perPage = parseInt(localStorage.getItem('perPage'), 10);
+            if (!isNaN(perPage)) this.options.perPage = perPage
         }
 
         if (table.tBodies.length && !table.tBodies[0].rows.length) {
@@ -300,7 +307,8 @@ export class DataTable {
             // Create the options
             options.perPageSelect.forEach(val => {
                 const selected = val === options.perPage
-                const option = new Option(val, val, selected, selected)
+                let option = new Option(val, val, selected, selected)
+                if (val === -1) option = new Option('ALL', val, selected, selected)
                 select.add(option)
             })
 
@@ -578,6 +586,7 @@ export class DataTable {
                 // Change per page
                 selector.addEventListener("change", () => {
                     options.perPage = parseInt(selector.value, 10)
+                    localStorage.setItem('perPage', options.perPage);
                     this.update()
 
                     this.fixHeight()
@@ -763,7 +772,7 @@ export class DataTable {
             this.searchData.forEach(index => rows.push(this.activeRows[index]))
         }
 
-        if (this.options.paging) {
+        if (this.options.paging && perPage > -1) {
             // Check for hidden columns
             this.pages = rows
                 .map((tr, i) => i % perPage === 0 ? rows.slice(i, i + perPage) : null)
