@@ -1,6 +1,6 @@
 {
   "name": "simple-datatables",
-  "version": "2.1.13",
+  "version": "3.0.0",
   "description": "A lightweight, dependency-free JavaScript HTML table plugin.",
   "main": "dist/index.js",
   "jsdelivr": "dist/umd/simple-datatables.js",
@@ -15,12 +15,12 @@
     "compile_css": "copy src\\style.css dist\\style.css",
     "compile_demo": "npm run compile_demo_js && copy node_modules\\systemjs\\dist\\s.min.js demo\\dist\\nomodule\\ && copy src\\style.css demo\\dist\\style.css",
     "compile_demo_js": "rollup -c rollup.demo.config.js",
-    "postcompile_demo": "xcopy dist\\umd demo\\dist /s /e",
+    "postcompile_demo": "xcopy dist\\umd demo\\dist /s /e /y",
     "prepare": "npm run compile"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fiduswriter/Simple-DataTables.git"
+    "url": "git+https://github.com/trehoffman/Simple-DataTables.git"
   },
   "keywords": [
     "DataTable",
@@ -30,12 +30,12 @@
     "filter",
     "sort"
   ],
-  "author": "Johannes Wilm",
+  "author": "Trevor Hoffman",
   "license": "LGPL-3.0",
   "bugs": {
-    "url": "https://github.com/fiduswriter/Simple-DataTables/issues"
+    "url": "https://github.com/trehoffman/Simple-DataTables/issues"
   },
-  "homepage": "https://github.com/fiduswriter/Simple-DataTables#readme",
+  "homepage": "https://github.com/trehoffman/Simple-DataTables#readme",
   "devDependencies": {
     "@babel/core": "^7.10.2",
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",

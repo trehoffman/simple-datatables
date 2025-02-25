@@ -324,13 +324,20 @@ export class DataTable {
         // Searchable
         if (options.searchable) {
             const form =
-                `<div class='dataTable-search'><input class='dataTable-input' placeholder='${options.labels.placeholder}' type='text'></div>`
+                `<span class='dataTable-search'><input class='dataTable-input' placeholder='${options.labels.placeholder}' type='text'></span>`
 
             // Search input placement
             template = template.replace("{search}", form)
         } else {
             template = template.replace("{search}", "")
         }
+
+        // column filter
+        const columnFilterForm = `
+            <span class="dataTable-columnFilter">
+                <button type="button" title="column filter" style="font-weight:bold;">⚙</button>
+            </span>`;
+        template = template.replace('{columnFilter}', columnFilterForm);
 
         if (this.hasHeadings) {
             // Sortable
@@ -603,6 +610,53 @@ export class DataTable {
                 this.input.addEventListener("keyup", () => this.search(this.input.value), false)
             }
         }
+
+        // column filter button
+        this.wrapper.querySelector('.dataTable-columnFilter button').addEventListener('click', (e) => {
+            if (!this.columnFilter) {
+                const form = `
+                    <dialog id="columnFilterDialog">
+                        <div>
+                            <label>Columns</label>
+                            <ol class="columns"></ol>
+                        </div>
+                        <div>
+                            <button type="button" class="close">OK</button>
+                        </div>
+                    </dialog>`;
+                this.wrapper.insertAdjacentHTML('beforeend', form)
+                console.log('this.wrapper', this.wrapper, this)
+                this.columnFilter = this.wrapper.querySelector('#columnFilterDialog')
+                this.columnFilter.addEventListener('click', (e) => {
+                    let target = e.target;
+                    if (target.classList.contains('close')) {
+                        this.columnFilter.close();
+                        return;
+                    }
+                })
+                this.columnFilter.addEventListener('change', (e) => {
+                    console.log('change', e)
+                    let target = e.target
+                    let row = target.closest('li')
+                    let index = parseInt(row.getAttribute('index'))
+                    if (target.checked) this.columns().show([index])
+                    else this.columns().hide([index])
+                })
+            }
+            let options = ``;
+            let columnVisibility = this.columns().visible()
+            console.log('columnVisibility', columnVisibility);
+            this.labels.forEach((label, index) => {
+                let visible = columnVisibility[index]
+                console.log(label, index, visible)
+                options += `
+                    <li index="${index}">
+                        <input type="checkbox" ${visible ? 'checked' : ''} /> ${label}
+                    </li>`
+            })
+            this.columnFilter.querySelector('.columns').innerHTML = options
+            this.columnFilter.showModal()
+        });
 
         // Pager(s) / sorting
         this.wrapper.addEventListener("click", e => {

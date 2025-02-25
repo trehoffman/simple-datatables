@@ -41,7 +41,7 @@ export const defaultConfig = {
 
     // Customise the layout
     layout: {
-        top: "{select}{search}",
+        top: "{select}<div>{search}{columnFilter}</div>",
         bottom: "{info}{pager}"
     }
 }
