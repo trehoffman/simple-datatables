@@ -993,8 +993,7 @@ export class DataTable {
         this.data.forEach((row, idx) => {
             const inArray = this.searchData.includes(row)
 
-            // https://github.com/Mobius1/Vanilla-DataTables/issues/12
-            const doesQueryMatch = query.split(" ").reduce((bool, word) => {
+            const doesQueryMatch = [query].reduce((bool, word) => {
                 let includes = false
                 let cell = null
                 let content = null
