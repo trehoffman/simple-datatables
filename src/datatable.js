@@ -625,7 +625,6 @@ export class DataTable {
                         </div>
                     </dialog>`;
                 this.wrapper.insertAdjacentHTML('beforeend', form)
-                console.log('this.wrapper', this.wrapper, this)
                 this.columnFilter = this.wrapper.querySelector('#columnFilterDialog')
                 this.columnFilter.addEventListener('click', (e) => {
                     let target = e.target;
@@ -635,7 +634,6 @@ export class DataTable {
                     }
                 })
                 this.columnFilter.addEventListener('change', (e) => {
-                    console.log('change', e)
                     let target = e.target
                     let row = target.closest('li')
                     let index = parseInt(row.getAttribute('index'))
@@ -645,10 +643,8 @@ export class DataTable {
             }
             let options = ``;
             let columnVisibility = this.columns().visible()
-            console.log('columnVisibility', columnVisibility);
             this.labels.forEach((label, index) => {
                 let visible = columnVisibility[index]
-                console.log(label, index, visible)
                 options += `
                     <li index="${index}">
                         <input type="checkbox" ${visible ? 'checked' : ''} /> ${label}
@@ -808,6 +804,64 @@ export class DataTable {
         this.render("pager")
 
         this.rows().update()
+
+        /* footer stuff begin */
+        function generateFooter(context) {
+            Number.prototype.countDecimals = function () {
+                if (Math.floor(this.valueOf()) === this.valueOf()) return 0;
+                var str = this.toString();
+                if (str.indexOf(".") !== -1 && str.indexOf("-") !== -1) {
+                    return str.split("-")[1] || 0;
+                } else if (str.indexOf(".") !== -1) {
+                    return str.split(".")[1].length || 0;
+                }
+                return str.split("-")[1] || 0;
+            }
+            let _this = context
+            let searchData = _this.searchData || []
+            let columnTypesDetected = [];
+            let activeFootings = [];
+            _this.activeHeadings.forEach((activeHeading, activeHeadingIndex) => {
+                let sum = 0
+                let values = [];
+                let forcedColumnType = activeHeading.getAttribute('data-type')
+                let detectedColumnType = 'number' // string, number
+                let precision = 0
+                _this.activeRows.forEach((activeRow, activeRowIndex) => {
+                    if (searchData.length > 0 && searchData.indexOf(activeRowIndex) === -1) return //skip row if filtered out
+                    let cell = activeRow.cells[activeHeadingIndex];
+                    let number = parseFloat(cell.data);
+                    if (isNaN(number)) {
+                        number = 0;
+                        detectedColumnType = 'string'
+                    } else {
+                        let decimalPlaces = number.countDecimals()
+                        if (decimalPlaces > precision) precision = decimalPlaces
+                    }
+                    sum = parseFloat((sum + number).toFixed(precision))
+                    values.push(cell.textContent.trim().toLowerCase())
+                })
+                let columnType = forcedColumnType || detectedColumnType
+                let cell =createElement("th", {
+                    title: (columnType === 'number') ? 'summation' : 'unique values'
+                })
+                cell.innerText = (columnType === 'integer') ? sum : (columnType === "number") ? sum.toFixed(precision) : [...new Set(values)].length;
+                cell.style.textAlign = activeHeading.style.textAlign
+                activeFootings.push(cell)
+                columnTypesDetected.push(detectedColumnType)
+
+            })
+            _this.columnTypes = columnTypesDetected
+            let footerRow = createElement('tr')
+            activeFootings.forEach(activeFooting => {
+                footerRow.insertAdjacentElement("beforeend", activeFooting)
+            })
+            let tfoot = createElement("tfoot")
+            tfoot.innerHTML = footerRow.outerHTML
+            return tfoot
+        }
+        if (this.options.footer && this.options.footer.auto) this.table.querySelector('tfoot').innerHTML = generateFooter(this).innerHTML
+        /* footer stuff end */
 
         this.emit("datatable.update")
     }
@@ -993,7 +1047,7 @@ export class DataTable {
         this.data.forEach((row, idx) => {
             const inArray = this.searchData.includes(row)
 
-            const doesQueryMatch = [query].reduce((bool, word) => {
+            const doesQueryMatch = query.split("|").reduce((bool, word) => {
                 let includes = false
                 let cell = null
                 let content = null
@@ -1026,6 +1080,8 @@ export class DataTable {
 
         if (!this.searchData.length) {
             this.wrapper.classList.remove("search-results")
+
+            this.table.querySelector('tfoot').innerHTML = ''
 
             this.setMessage(this.options.labels.noRows)
         } else {
