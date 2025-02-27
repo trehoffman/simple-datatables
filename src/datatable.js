@@ -830,7 +830,8 @@ export class DataTable {
                 _this.activeRows.forEach((activeRow, activeRowIndex) => {
                     if (searchData.length > 0 && searchData.indexOf(activeRowIndex) === -1) return //skip row if filtered out
                     let cell = activeRow.cells[activeHeadingIndex];
-                    let number = parseFloat(cell.data);
+                    let value = (cell.getAttribute('data-value') || cell.textContent).trim().toLowerCase()
+                    let number = parseFloat(value);
                     if (isNaN(number)) {
                         number = 0;
                         detectedColumnType = 'string'
@@ -839,7 +840,7 @@ export class DataTable {
                         if (decimalPlaces > precision) precision = decimalPlaces
                     }
                     sum = parseFloat((sum + number).toFixed(precision))
-                    values.push(cell.textContent.trim().toLowerCase())
+                    values.push(value)
                 })
                 let columnType = forcedColumnType || detectedColumnType
                 let cell =createElement("th", {
