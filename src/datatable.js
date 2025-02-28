@@ -11,6 +11,9 @@ import {
     button,
     truncate
 } from "./helpers"
+import {
+    exportCSV
+} from "./export"
 
 
 export class DataTable {
@@ -335,7 +338,13 @@ export class DataTable {
         // column filter
         const columnFilterForm = `
             <span class="dataTable-columnFilter">
-                <button type="button" title="column filter" style="font-weight:bold;">⚙</button>
+                <div class="dropdown">
+                    <button type="button" title="column filter" style="font-weight:bold;">⚙</button>
+                    <div class="dropdown-content" style="right:0;">
+                        <a href="#!" class="open-columnFilter">Column Filter</a>
+                        <a href="#!" class="export-csv">Export CSV</a>
+                    </div>
+                </div>
             </span>`;
         template = template.replace('{columnFilter}', columnFilterForm);
 
@@ -612,7 +621,7 @@ export class DataTable {
         }
 
         // column filter button
-        this.wrapper.querySelector('.dataTable-columnFilter button').addEventListener('click', (e) => {
+        this.wrapper.querySelector('.open-columnFilter').addEventListener('click', (e) => {
             if (!this.columnFilter) {
                 const form = `
                     <dialog id="columnFilterDialog">
@@ -675,6 +684,17 @@ export class DataTable {
         window.addEventListener("resize", () => {
             this.rect = this.container.getBoundingClientRect()
             this.fixColumns()
+        })
+
+        // listen for click commands
+        this.wrapper.addEventListener("click", e => {
+            let target = e.target
+            if (target.classList.contains('export-csv')) {
+                console.log('export-csv', this)
+                let result = exportCSV(this, {})
+                console.log('exportCSV result', result)
+                return
+            }
         })
     }
 

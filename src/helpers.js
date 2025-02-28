@@ -135,3 +135,15 @@ export const truncate = (a, b, c, d, ellipsis) => {
 
     return i
 }
+
+export const cellToText = (obj) => {
+    if (obj === null || obj === undefined) {
+        return ""
+    } else if (obj.hasOwnProperty("text") || obj.hasOwnProperty("data")) {
+        const cell = obj
+        return cell.text ?? cellToText(cell.data)
+    } else if (obj.hasOwnProperty("nodeName")) {
+        return objToText(obj)
+    }
+    return String(obj)
+}
