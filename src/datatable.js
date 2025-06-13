@@ -808,8 +808,9 @@ export class DataTable {
         /* footer stuff begin */
         function generateFooter(context) {
             Number.prototype.countDecimals = function () {
-                if (Math.floor(this.valueOf()) === this.valueOf()) return 0;
-                var str = this.toString();
+                let number = Math.abs(this);
+                if (Math.floor(number.valueOf()) === number.valueOf()) return 0;
+                var str = number.toString();
                 if (str.indexOf(".") !== -1 && str.indexOf("-") !== -1) {
                     return str.split("-")[1] || 0;
                 } else if (str.indexOf(".") !== -1) {
