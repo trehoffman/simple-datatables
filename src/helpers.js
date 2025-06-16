@@ -135,3 +135,125 @@ export const truncate = (a, b, c, d, ellipsis) => {
 
     return i
 }
+
+export const objToText = (obj) => {
+    if (["#text", "#comment"].includes(obj.nodeName)) {
+        return (obj).data
+    }
+    if (obj.childNodes) {
+        return obj.childNodes.map((childNode) => objToText(childNode)).join("")
+    }
+    return ""
+}
+
+export const cellToText = (obj) => {
+    if (obj === null || obj === undefined) {
+        return ""
+    } else if (obj.hasOwnProperty("text") || obj.hasOwnProperty("data")) {
+        const cell = obj
+        return cell.text ?? cellToText(cell.data)
+    } else if (obj.hasOwnProperty("nodeName")) {
+        return objToText(obj)
+    }
+    return String(obj)
+}
+
+
+export const escapeText = function(text) {
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+}
+
+
+export const visibleToColumnIndex = function(visibleIndex, columns) {
+    let counter = 0
+    let columnIndex = 0
+    while (counter < (visibleIndex+1)) {
+        const columnSettings = columns[columnIndex]
+        if (!columnSettings.hidden) {
+            counter += 1
+        }
+        columnIndex += 1
+    }
+    return columnIndex-1
+}
+
+export const columnToVisibleIndex = function(columnIndex, columns) {
+    let visibleIndex = columnIndex
+    let counter = 0
+    while (counter < columnIndex) {
+        const columnSettings = columns[counter]
+        if (columnSettings.hidden) {
+            visibleIndex -= 1
+        }
+        counter++
+    }
+    return visibleIndex
+}
+
+/**
+ * Converts a [NamedNodeMap](https://developer.mozilla.org/en-US/docs/Web/API/NamedNodeMap) into a normal object.
+ *
+ * @param map The `NamedNodeMap` to convert
+ */
+export const namedNodeMapToObject = function(map) {
+    const obj = {}
+    if (map) {
+        for (const attr of map) {
+            obj[attr.name] = attr.value
+        }
+    }
+    return obj
+}
+
+/**
+ * Convert class names to a CSS selector. Multiple classes should be separated by spaces.
+ * Examples:
+ *  - "my-class" -> ".my-class"
+ *  - "my-class second-class" -> ".my-class.second-class"
+ *
+ * @param classNames The class names to convert. Can contain multiple classes separated by spaces.
+ */
+export const classNamesToSelector = (classNames) => {
+    if (!classNames) {
+        return null
+    }
+    return classNames.trim().split(" ").map(className => `.${className}`).join("")
+}
+
+/**
+ * Check if the element contains all the classes. Multiple classes should be separated by spaces.
+ *
+ * @param element The element that will be checked
+ * @param classes The classes that must be present in the element. Can contain multiple classes separated by spaces.
+ */
+export const containsClass = (element, classes) => {
+    const hasMissingClass = classes?.split(" ").some(className => !element.classList.contains(className))
+    return !hasMissingClass
+}
+
+/**
+ * Join two strings with spaces. Null values are ignored.
+ * Examples:
+ *  - joinWithSpaces("a", "b") -> "a b"
+ *  - joinWithSpaces("a", null) -> "a"
+ *  - joinWithSpaces(null, "b") -> "b"
+ *  - joinWithSpaces("a", "b c") -> "a b c"
+ *
+ * @param first The first string to join
+ * @param second The second string to join
+ */
+export const joinWithSpaces = (first, second) => {
+    if (first) {
+        if (second) {
+            return `${first} ${second}`
+        }
+        return first
+    } else if (second) {
+        return second
+    }
+    return ""
+}

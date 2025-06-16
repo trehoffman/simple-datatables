@@ -118,7 +118,7 @@ const data = {
         [
             "Shafira U. French",
             "Assistant",
-            "Nisi Magna Incorporated",
+            "Nisi Magna, Inc",
             "5116",
             "July 23 2016",
             "metus.In.nec@bibendum.ca",

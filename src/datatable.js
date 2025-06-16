@@ -11,6 +11,12 @@ import {
     button,
     truncate
 } from "./helpers"
+import {
+    exportCSV,
+    exportJSON,
+    exportSQL,
+    exportTXT
+} from "./export";
 
 
 export class DataTable {
@@ -616,9 +622,28 @@ export class DataTable {
             if (!this.columnFilter) {
                 const form = `
                     <dialog id="columnFilterDialog">
-                        <div>
-                            <label>Columns</label>
-                            <ol class="columns"></ol>
+                        <div style="display:flex;">
+                            <div>
+                                <label>Columns</label>
+                                <ol class="columns"></ol>
+                            </div>
+                            <div>
+                                <label>Export</label>
+                                <ul>
+                                    <li>
+                                        <a href="javascript:void(0);" class="exportCSV">CSV</a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0);" class="exportJSON">JSON</a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0);" class="exportSQL">SQL</a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0);" class="exportTXT">TXT</a>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                         <div>
                             <button type="button" class="close">OK</button>
@@ -630,6 +655,30 @@ export class DataTable {
                     let target = e.target;
                     if (target.classList.contains('close')) {
                         this.columnFilter.close();
+                        return;
+                    }
+                    if (target.classList.contains('exportCSV')) {
+                        exportCSV(this, {
+                            filename: this.caption || ''
+                        });
+                        return;
+                    }
+                    if (target.classList.contains('exportJSON')) {
+                        exportJSON(this, {
+                            filename: this.caption || ''
+                        });
+                        return;
+                    }
+                    if (target.classList.contains('exportSQL')) {
+                        exportSQL(this, {
+                            filename: this.caption || ''
+                        });
+                        return;
+                    }
+                    if (target.classList.contains('exportTXT')) {
+                        exportTXT(this, {
+                            filename: this.caption || ''
+                        });
                         return;
                     }
                 })
