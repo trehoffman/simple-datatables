@@ -1,7 +1,3 @@
-import {
-    DataTable
-} from "../src"
-
 const t = document.createElement('table')
 const data = {
     "headings": [
