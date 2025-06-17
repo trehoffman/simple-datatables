@@ -146,7 +146,7 @@ const data = {
 
 document.body.appendChild(t)
 
-window.dt = new simpleDataTables.DataTable(t, {
+window.dt = new simpleDatatables.DataTable(t, {
     data,
     filters: {"Job": ["Assistant", "Manager"]},
     columns: [
