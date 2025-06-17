@@ -146,9 +146,7 @@ const data = {
 
 document.body.appendChild(t)
 
-const log = []
-let testName
-window.dt = new DataTable(t, {
+window.dt = new simpleDataTables.DataTable(t, {
     data,
     filters: {"Job": ["Assistant", "Manager"]},
     columns: [
