@@ -14,9 +14,7 @@
     "compile_js": "rollup -c",
     "compile_js_umd": "browserify dist/index.js --standalone simpleDatatables -o dist/umd/simple-datatables.js",
     "compile_css": "copy src\\style.css dist\\style.css",
-    "compile_demo": "npm run compile_demo_js && copy node_modules\\systemjs\\dist\\s.min.js demo\\dist\\nomodule\\ && copy src\\style.css demo\\dist\\style.css",
-    "compile_demo_js": "rollup -c rollup.demo.config.js",
-    "postcompile_demo": "xcopy dist\\umd demo\\dist /s /e /y",
+    "compile_demo": "copy dist\\umd\\simple-datatables.js demo\\js\\simple-datatables.js && copy src\\style.css demo\\css\\style.css",
     "prepare": "npm run compile"
   },
   "repository": {
