@@ -4,6 +4,8 @@ import builtins from 'rollup-plugin-node-builtins'
 import resolve from 'rollup-plugin-node-resolve'
 import babel from 'rollup-plugin-babel'
 import {terser} from 'rollup-plugin-terser'
+import {header} from 'rollup-plugin-header'
+import pkg from './package.json'; // Import package.json
 
 export default [
     {
@@ -18,7 +20,10 @@ export default [
 				               '@babel/plugin-syntax-dynamic-import'
 			           ]
 		        }),
-            terser()
+            terser(),
+            header({
+                header: `/* Version ${pkg.version} */\n`, // Include the version from package.json
+            })
         ],
         output: // ES module version, for modern browsers
         {
@@ -39,7 +44,10 @@ export default [
 				               '@babel/plugin-syntax-dynamic-import'
 			           ]
 		        }),
-            terser()
+            terser(),
+            header({
+                header: `/* Version ${pkg.version} */\n`, // Include the version from package.json
+            })
         ],
         output: // SystemJS version, for older browsers
         {
@@ -60,7 +68,10 @@ export default [
 				               '@babel/plugin-syntax-dynamic-import'
 			           ]
 		        }),
-            terser()
+            terser(),
+            header({
+                header: `/* Version ${pkg.version} */\n`, // Include the version from package.json
+            })
         ],
         output: // CJS version
         {
