@@ -1,6 +1,6 @@
 {
   "name": "simple-datatables",
-  "version": "3.0.5",
+  "version": "3.0.6",
   "description": "A lightweight, dependency-free JavaScript HTML table plugin.",
   "main": "dist/index.js",
   "jsdelivr": "dist/umd/simple-datatables.js",
@@ -14,7 +14,7 @@
     "compile_js": "rollup -c",
     "compile_js_umd": "browserify dist/index.js --standalone simpleDatatables -o dist/umd/simple-datatables.js",
     "compile_css": "copy src\\style.css dist\\style.css",
-    "compile_demo": "copy dist\\umd\\simple-datatables.js docs\\js\\simple-datatables.js && copy src\\style.css docs\\css\\style.css",
+    "compile_demo": "copy dist\\umd\\simple-datatables.js docs\\js\\simple-datatables.js && copy src\\style.css docs\\css\\simple-datatables.css",
     "prepare": "npm run compile"
   },
   "repository": {

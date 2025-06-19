@@ -148,7 +148,7 @@ document.body.appendChild(t)
 
 window.dt = new simpleDatatables.DataTable(t, {
     data,
-    filters: {"Job": ["Assistant", "Manager"]},
+    filters: {"Job": ["Manager"]},
     columns: [
         {
             select: 3,

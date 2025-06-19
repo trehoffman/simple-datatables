@@ -272,34 +272,36 @@ export class Columns {
         const dt = this.dt
 
         // Creates a internal state that manages filters if there are none
-        if ( !dt.filterState ) {
+        if (!dt.filterState) {
             dt.filterState = {
                 originalData: dt.data
             }
         }
-
-        // If that column is was not filtered yet, we need to create its state
-        if ( !dt.filterState[column] ) {
-
-            // append a filter that selects all rows, 'resetting' the filter
-            const filters = [...terms, () => true]
-
-            dt.filterState[column] = (
-                function() {
-                    let i = 0;
-                    return () => filters[i++ % (filters.length)]
-                }()
-            )
-        }
+        dt.filterState[column] = terms
 
         // Apply the filter and rebuild table
-        const rowFilter = dt.filterState[column]() // fetches next filter
         const filteredRows = Array.from(dt.filterState.originalData).filter(tr => {
-            const cell = tr.cells[column]
-            const content = cell.hasAttribute('data-content') ? cell.getAttribute('data-content') : cell.innerText
+            let cells = Array.from(tr.cells);
+            let rowFilterStatus = [];
+            for (let i = 0; i < cells.length; i++) {
+                let cell = cells[i];
+                const content = cell.hasAttribute('data-content') ? cell.getAttribute('data-content') : cell.innerText
 
-            // If the filter is a function, call it, if it is a string, compare it
-            return (typeof rowFilter) === 'function' ? rowFilter(content) : content === rowFilter;
+                let rowFilter = dt.filterState[i];
+                rowFilterStatus[i] = (rowFilter) ? 'filtered' : 'unfiltered';
+                if (rowFilter && rowFilter.indexOf(content) === -1) return false
+            }
+            rowFilterStatus.forEach((filterStatus, index) => {
+                switch (filterStatus) {
+                    case 'filtered':
+                        dt.headings[index].classList.add('filtered')
+                        break;
+                    default:
+                        dt.headings[index].classList.remove('filtered')
+                        break;
+                }
+            })
+            return true;
         })
 
         dt.data = filteredRows
@@ -322,14 +324,6 @@ export class Columns {
         // Check column is present
         if (dt.hasHeadings && (column < 0 || column > dt.headings.length)) {
             return false
-        }
-
-        //If there is a filter for this column, apply it instead of sorting
-        const filterTerms = dt.options.filters &&
-              dt.options.filters[dt.headings[column].textContent]
-        if ( filterTerms && filterTerms.length !== 0 ) {
-            this.filter(column, dir, init, filterTerms)
-            return;
         }
 
         dt.sorting = true

@@ -113,6 +113,13 @@ export class DataTable {
 
         this.render()
 
+        // process initial filter option
+        for (const [key, value] of Object.entries(this.options.filters || {})) {
+            let columnIndex = this.labels.indexOf(key);
+            if(columnIndex < 0) continue;
+            this.columns().filter(columnIndex, null, true, value)
+        }
+
         setTimeout(() => {
             this.emit("datatable.init")
             this.initialized = true
@@ -592,6 +599,83 @@ export class DataTable {
      */
     bindEvents() {
         const options = this.options
+
+        this.wrapper.addEventListener('contextmenu', (e) => {
+            if (e.target.classList.contains('dataTable-sorter')) {
+                e.preventDefault();
+
+                function setValues(_this) {
+                    let columnIndex = parseInt(_this.columnValueFilter.querySelector('.values').getAttribute('columnIndex'))
+                    let label = _this.columnValueFilter.querySelector('.values').getAttribute('label');
+                    let dataSet = ((_this.filterState || {}).originalData || _this.data || []);
+                    let values = Array.from(new Set([...dataSet.map(tr => tr.children[columnIndex].innerText)])).sort();
+                    let filters = (_this.filterState || {})[columnIndex];
+                    let options = `<li style="list-style-type:none;"><input type="checkbox" class="select-all" /> Select All</li>`;
+                    values.forEach((value, index) => {
+                        let checked = (!filters || filters.indexOf(value) > -1);
+                        options += `
+                            <li index="${index}" value="${(index+1)}">
+                                <input type="checkbox" value="${value}" ${(checked) ? 'checked' : ''} /> ${value}
+                            </li>`
+                    })
+                    _this.columnValueFilter.querySelector('.values').innerHTML = options
+                }
+
+                if (!this.columnValueFilter) {
+                    const form = `
+                    <dialog id="columnValueFilterDialog">
+                        <div style="display:flex;">
+                            <div>
+                                <label>Values</label>
+                                <ol class="values"></ol>
+                            </div>
+                        </div>
+                        <div>
+                            <button type="button" class="reset">Reset</button>
+                            <button type="button" class="close">OK</button>
+                        </div>
+                    </dialog>`;
+                    this.wrapper.insertAdjacentHTML('beforeend', form)
+                    this.columnValueFilter = this.wrapper.querySelector('#columnValueFilterDialog')
+                    this.columnValueFilter.addEventListener('click', (e) => {
+                        let target = e.target;
+                        if (target.classList.contains('close')) {
+                            /*CHECK FOR FILTER CHANGES START*/
+                            let ol = this.columnValueFilter.querySelector('ol')
+                            let columnIndex = parseInt(ol.getAttribute('columnIndex'))
+                            let label = ol.getAttribute('label')
+                            let filterArray = Array.from(ol.querySelectorAll('input[type=checkbox]:checked:not(.select-all)')).map(e => e.getAttribute('value'))
+                            this.columns().filter(columnIndex, null, true, filterArray)
+                            /*CHECK FOR FILTER CHANGES END*/
+                            this.columnValueFilter.close();
+                            return
+                        }
+                        if (target.classList.contains('reset')) {
+                            let ol = this.columnValueFilter.querySelector('ol')
+                            let columnIndex = parseInt(ol.getAttribute('columnIndex'))
+                            this.columns().filter(columnIndex, null, true, null)
+                            this.columnValueFilter.close();
+                            return
+                        }
+                        if (target.classList.contains('select-all')) {
+                            let checked = target.checked;
+                            target.closest('ol').querySelectorAll('input[type=checkbox]:not(.select-all)').forEach(e => e.checked = checked)
+                            return
+                        }
+                    })
+                }
+                let th = e.target.closest('th');
+                let row = th.closest('tr');
+                let columnIndex = Array.from(row.children).indexOf(th);
+                let label = this.labels[columnIndex];
+                this.columnValueFilter.querySelector('.values').setAttribute('columnIndex', columnIndex)
+                this.columnValueFilter.querySelector('.values').setAttribute('label', label);
+                setValues(this)
+                this.columnValueFilter.showModal()
+                return;
+            }
+        });
+
         // Per page selector
         if (options.perPageSelect) {
             const selector = this.wrapper.querySelector(".dataTable-selector")
@@ -1636,7 +1720,7 @@ export class DataTable {
     setMessage(message) {
         let colspan = 1
 
-        if (this.hasRows) {
+        if (this.hasRows && this.data.length > 0) {
             colspan = this.data[0].cells.length
         } else if (this.activeHeadings.length) {
             colspan = this.activeHeadings.length
