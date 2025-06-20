@@ -277,7 +277,16 @@ export class Columns {
                 originalData: dt.data
             }
         }
-        dt.filterState[column] = terms
+
+        function getLabel(columnIndex) {
+            return dt.headings[columnIndex].innerText
+        }
+
+        function getActiveLabel(activeColumnIndex) {
+            return dt.activeHeadings[activeColumnIndex].innerText
+        }
+
+        dt.filterState[getActiveLabel(column)] = terms
 
         // Apply the filter and rebuild table
         const filteredRows = Array.from(dt.filterState.originalData).filter(tr => {
@@ -286,8 +295,8 @@ export class Columns {
             for (let i = 0; i < cells.length; i++) {
                 let cell = cells[i];
                 const content = cell.hasAttribute('data-content') ? cell.getAttribute('data-content') : cell.innerText
-
-                let rowFilter = dt.filterState[i];
+                let label = getLabel(i)
+                let rowFilter = dt.filterState[label];
                 rowFilterStatus[i] = (rowFilter) ? 'filtered' : 'unfiltered';
                 if (rowFilter && rowFilter.indexOf(content) === -1) return false
             }

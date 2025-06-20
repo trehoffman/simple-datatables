@@ -604,13 +604,31 @@ export class DataTable {
             if (e.target.classList.contains('dataTable-sorter')) {
                 e.preventDefault();
 
+                function getColumnIndex(_this, label) {
+                    let columnIndex
+                    Array.from(_this.headings).forEach((th, index) => {
+                      if (th.innerText === label) columnIndex = index  
+                    })
+                    return columnIndex
+                }
+
+                function getActiveColumnIndex(_this, label) {
+                    let columnIndex
+                    Array.from(_this.activeHeadings).forEach((th, index) => {
+                      if (th.innerText === label) columnIndex = index  
+                    })
+                    return columnIndex
+                }
+
                 function setValues(_this) {
-                    let columnIndex = parseInt(_this.columnValueFilter.querySelector('.values').getAttribute('columnIndex'))
                     let label = _this.columnValueFilter.querySelector('.values').getAttribute('label')
+                    let columnIndex = getColumnIndex(_this, label)
+                    let activeColumnIndex = getActiveColumnIndex(_this, label)
                     let dataSet = ((_this.filterState || {}).originalData || _this.data || [])
                     let allValues = Array.from(new Set([...dataSet.map(tr => tr.children[columnIndex].innerText)])).sort()
-                    let activeValues = Array.from(new Set([..._this.data.map(tr => tr.children[columnIndex].innerText)])).sort();
-                    let filters = (_this.filterState || {})[columnIndex];
+                    let activeValues = Array.from(new Set([..._this.activeRows.map(tr => tr.children[activeColumnIndex].innerText)])).sort()
+                    console.log('activeValues', activeValues)
+                    let filters = (_this.filterState || {})[label]
                     let options = `<li style="list-style-type:none;"><input type="checkbox" class="select-all" /> Select All</li>`
                     allValues.forEach((value, index) => {
                         let checked = (!filters || filters.indexOf(value) > -1)
@@ -645,19 +663,20 @@ export class DataTable {
                         if (target.classList.contains('close')) {
                             /*CHECK FOR FILTER CHANGES START*/
                             let ol = this.columnValueFilter.querySelector('ol')
-                            let columnIndex = parseInt(ol.getAttribute('columnIndex'))
                             let label = ol.getAttribute('label')
+                            let activeColumnIndex = getActiveColumnIndex(this, label)
                             let filterArray = Array.from(ol.querySelectorAll('input[type=checkbox]:checked:not(.select-all)')).map(e => e.getAttribute('value'))
-                            this.columns().filter(columnIndex, null, true, filterArray)
+                            this.columns().filter(activeColumnIndex, null, true, filterArray)
                             /*CHECK FOR FILTER CHANGES END*/
                             this.columnValueFilter.close();
                             return
                         }
                         if (target.classList.contains('reset')) {
                             let ol = this.columnValueFilter.querySelector('ol')
-                            let columnIndex = parseInt(ol.getAttribute('columnIndex'))
-                            this.columns().filter(columnIndex, null, true, null)
-                            this.columnValueFilter.close();
+                            let label = ol.getAttribute('label')
+                            let activeColumnIndex = getActiveColumnIndex(this, label)
+                            this.columns().filter(activeColumnIndex, null, true, null)
+                            this.columnValueFilter.close()
                             return
                         }
                         if (target.classList.contains('select-all')) {
@@ -667,12 +686,10 @@ export class DataTable {
                         }
                     })
                 }
-                let th = e.target.closest('th');
-                let row = th.closest('tr');
-                let columnIndex = Array.from(row.children).indexOf(th);
-                let label = this.labels[columnIndex];
-                this.columnValueFilter.querySelector('.values').setAttribute('columnIndex', columnIndex)
-                this.columnValueFilter.querySelector('.values').setAttribute('label', label);
+                let th = e.target.closest('th')
+                let label = th.innerText
+                this.columnValueFilter.querySelector('label').innerText = label
+                this.columnValueFilter.querySelector('.values').setAttribute('label', label)
                 setValues(this)
                 this.columnValueFilter.showModal()
                 return;
@@ -733,39 +750,51 @@ export class DataTable {
                             </div>
                         </div>
                         <div>
+                            <button type="button" class="reset">Reset</button>
                             <button type="button" class="close">OK</button>
                         </div>
                     </dialog>`;
                 this.wrapper.insertAdjacentHTML('beforeend', form)
                 this.columnFilter = this.wrapper.querySelector('#columnFilterDialog')
                 this.columnFilter.addEventListener('click', (e) => {
-                    let target = e.target;
+                    let target = e.target
+                    if (target.classList.contains('reset')) {
+                        //remove column filters
+                        this.labels.forEach((label, index) => this.columns().show([index]))
+                        //remove column value filters
+                        this.labels.forEach((label, index) => this.columns().filter(index, null, true, null))
+                        //remove search filter\
+                        document.querySelector('.dataTable-search input.dataTable-input').value = ''
+                        this.search('')
+                        this.columnFilter.close()
+                        return
+                    }
                     if (target.classList.contains('close')) {
-                        this.columnFilter.close();
-                        return;
+                        this.columnFilter.close()
+                        return
                     }
                     if (target.classList.contains('exportCSV')) {
                         exportCSV(this, {
                             filename: this.caption || ''
-                        });
-                        return;
+                        })
+                        return
                     }
                     if (target.classList.contains('exportJSON')) {
                         exportJSON(this, {
                             filename: this.caption || ''
-                        });
+                        })
                         return;
                     }
                     if (target.classList.contains('exportSQL')) {
                         exportSQL(this, {
                             filename: this.caption || ''
-                        });
-                        return;
+                        })
+                        return
                     }
                     if (target.classList.contains('exportTXT')) {
                         exportTXT(this, {
                             filename: this.caption || ''
-                        });
+                        })
                         return;
                     }
                 })
