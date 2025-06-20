@@ -606,16 +606,19 @@ export class DataTable {
 
                 function setValues(_this) {
                     let columnIndex = parseInt(_this.columnValueFilter.querySelector('.values').getAttribute('columnIndex'))
-                    let label = _this.columnValueFilter.querySelector('.values').getAttribute('label');
-                    let dataSet = ((_this.filterState || {}).originalData || _this.data || []);
-                    let values = Array.from(new Set([...dataSet.map(tr => tr.children[columnIndex].innerText)])).sort();
+                    let label = _this.columnValueFilter.querySelector('.values').getAttribute('label')
+                    let dataSet = ((_this.filterState || {}).originalData || _this.data || [])
+                    let allValues = Array.from(new Set([...dataSet.map(tr => tr.children[columnIndex].innerText)])).sort()
+                    let activeValues = Array.from(new Set([..._this.data.map(tr => tr.children[columnIndex].innerText)])).sort();
                     let filters = (_this.filterState || {})[columnIndex];
-                    let options = `<li style="list-style-type:none;"><input type="checkbox" class="select-all" /> Select All</li>`;
-                    values.forEach((value, index) => {
-                        let checked = (!filters || filters.indexOf(value) > -1);
+                    let options = `<li style="list-style-type:none;"><input type="checkbox" class="select-all" /> Select All</li>`
+                    allValues.forEach((value, index) => {
+                        let checked = (!filters || filters.indexOf(value) > -1)
+                        let isActive = (activeValues.indexOf(value) > -1)
+                        let displayValue = (isActive) ? `<b>${value}</b>` : value
                         options += `
                             <li index="${index}" value="${(index+1)}">
-                                <input type="checkbox" value="${value}" ${(checked) ? 'checked' : ''} /> ${value}
+                                <input type="checkbox" value="${value}" ${(checked) ? 'checked' : ''} /> ${displayValue}
                             </li>`
                     })
                     _this.columnValueFilter.querySelector('.values').innerHTML = options
