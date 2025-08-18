@@ -1248,7 +1248,7 @@ export class DataTable {
         if (!this.searchData.length) {
             this.wrapper.classList.remove("search-results")
 
-            this.table.querySelector('tfoot').innerHTML = ''
+            if (this.table.querySelector('tfoot')) this.table.querySelector('tfoot').innerHTML = ''
 
             this.setMessage(this.options.labels.noRows)
         } else {
