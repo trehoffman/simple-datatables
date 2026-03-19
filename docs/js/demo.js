@@ -8,7 +8,8 @@ const data = {
         "Start Date",
         "Email",
         "Phone No.",
-        "Salary"
+        "Salary",
+        "Link"
     ],
     "data": [
         [
@@ -19,7 +20,8 @@ const data = {
             "March 27 2017",
             "nunc.ullamcorper@metusvitae.com",
             "070 8206 9605",
-            "100.00"
+            "100.00",
+            "<a href=\"#\">Link</a>"
         ],
         [
             "Genevieve U. Watts",
@@ -29,7 +31,8 @@ const data = {
             "July 18 2017",
             "Nullam.vitae@egestas.edu",
             "0800 025698",
-            "99.99"
+            "99.99",
+            "<a href=\"#\">Link</a>"
         ],
         [
             "Kyra S. Baldwin",
@@ -39,7 +42,8 @@ const data = {
             "April 14 2016",
             "in@elita.org",
             "0800 237 8846",
-            "352.45"
+            "352.45",
+            "<a href=\"#\">Link</a>"
         ],
         [
             "Stephen V. Hill",
@@ -49,7 +53,8 @@ const data = {
             "March 3 2016",
             "eu@vel.com",
             "0800 682 4591",
-            "69.69"
+            "69.69",
+            "<a href=\"#\">Link</a>"
         ],
         [
             "Vielka Q. Chapman",
@@ -59,7 +64,8 @@ const data = {
             "June 25 2017",
             "orci.Donec.nibh@mauriserateget.edu",
             "0800 181 5795",
-            "420.69"
+            "420.69",
+            "<a href=\"#\">Link</a>"
         ],
         [
             "Ocean W. Curtis",
@@ -69,7 +75,8 @@ const data = {
             "August 24 2017",
             "cursus.et@cursus.edu",
             "(016977) 9585",
-            "9999.99"
+            "9999.99",
+            "<a href=\"#\">Link</a>"
         ],
         [
             "Kato F. Tucker",
@@ -79,7 +86,8 @@ const data = {
             "November 6 2017",
             "Duis@Lorem.edu",
             "070 0981 8503",
-            "3.50"
+            "3.50",
+            "<a href=\"#\">Link</a>"
         ],
         [
             "Robin J. Wise",
@@ -89,7 +97,8 @@ const data = {
             "February 9 2017",
             "blandit@montesnascetur.edu",
             "0800 259158",
-            "50.45"
+            "50.45",
+            "<a href=\"#\">Link</a>"
         ],
         [
             "Uriel H. Guerrero",
@@ -99,7 +108,8 @@ const data = {
             "February 11 2018",
             "vitae@Innecorci.net",
             "0500 948772",
-            "28.55"
+            "28.55",
+            "<a href=\"#\">Link</a>"
         ],
         [
             "Yasir W. Benson",
@@ -109,7 +119,8 @@ const data = {
             "January 13 2017",
             "ornare.elit.elit@atortor.edu",
             "0391 916 3600",
-            "67.87"
+            "67.87",
+            "<a href=\"#\">Link</a>"
         ],
         [
             "Shafira U. French",
@@ -119,7 +130,8 @@ const data = {
             "July 23 2016",
             "metus.In.nec@bibendum.ca",
             "(018013) 26699",
-            "0.23"
+            "0.23",
+            "<a href=\"#\">Link</a>"
         ],
         [
             "Casey E. Hood",
@@ -129,7 +141,8 @@ const data = {
             "May 5 2017",
             "justo.Praesent@sitamet.ca",
             "0800 570796",
-            "1.24"
+            "1.24",
+            "<a href=\"#\">Link</a>"
         ],
         [
             "Caleb X. Finch",
@@ -139,7 +152,8 @@ const data = {
             "September 19 2016",
             "condimentum@eleifend.com",
             "056 1551 7431",
-            "14.15"
+            "14.15",
+            "<a href=\"#\">Link</a>"
         ]
     ]
 }

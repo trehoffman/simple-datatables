@@ -733,20 +733,37 @@ export class DataTable {
                             </div>
                             <div>
                                 <label>Export</label>
-                                <ul>
+                                <ul class="no-bullets">
                                     <li>
-                                        <a href="javascript:void(0);" class="exportCSV">CSV</a>
+                                        <label>Cell Values</label>
+                                        <ul class="no-bullets">
+                                            <li>
+                                                <label><input type="radio" name="cellValues" value="text only" checked /> Text only</label>
+                                            </li>
+                                            <li>
+                                                <label><input type="radio" name="cellValues" value="raw" /> Raw</label>
+                                            </li>
+                                        </ul>
                                     </li>
                                     <li>
-                                        <a href="javascript:void(0);" class="exportJSON">JSON</a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);" class="exportSQL">SQL</a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);" class="exportTXT">TXT</a>
+                                        <label>Type</label>
+                                        <ul class="no-bullets">
+                                            <li>
+                                                <label><input type="radio" name="exportType" value="csv" checked /> CSV</label>
+                                            </li>
+                                            <li>
+                                                <label><input type="radio" name="exportType" value="json" /> JSON</label>
+                                            </li>
+                                            <li>
+                                                <label><input type="radio" name="exportType" value="sql" /> SQL</label>
+                                            </li>
+                                            <li>
+                                                <label><input type="radio" name="exportType" value="txt" /> TXT</label>
+                                            </li>
+                                        </ul>
                                     </li>
                                 </ul>
+                                <button type="button" class="download">Download</button>
                             </div>
                         </div>
                         <div>
@@ -773,33 +790,20 @@ export class DataTable {
                         this.columnFilter.close()
                         return
                     }
-                    if (target.classList.contains('exportCSV')) {
-                        exportCSV(this, {
-                            filename: this.caption || ''
-                        })
+                    if (target.classList.contains('download')) {
+                        const cellValues = this.columnFilter.querySelector('input[name="cellValues"]:checked').value
+                        const exportType = this.columnFilter.querySelector('input[name="exportType"]:checked').value
+                        const exportOptions = { filename: this.caption || '', cellValues }
+                        if (exportType === 'csv') exportCSV(this, exportOptions)
+                        else if (exportType === 'json') exportJSON(this, exportOptions)
+                        else if (exportType === 'sql') exportSQL(this, exportOptions)
+                        else if (exportType === 'txt') exportTXT(this, exportOptions)
                         return
-                    }
-                    if (target.classList.contains('exportJSON')) {
-                        exportJSON(this, {
-                            filename: this.caption || ''
-                        })
-                        return;
-                    }
-                    if (target.classList.contains('exportSQL')) {
-                        exportSQL(this, {
-                            filename: this.caption || ''
-                        })
-                        return
-                    }
-                    if (target.classList.contains('exportTXT')) {
-                        exportTXT(this, {
-                            filename: this.caption || ''
-                        })
-                        return;
                     }
                 })
                 this.columnFilter.addEventListener('change', (e) => {
                     let target = e.target
+                    if (target.type !== 'checkbox') return
                     let row = target.closest('li')
                     let index = parseInt(row.getAttribute('index'))
                     if (target.checked) this.columns().show([index])

@@ -1,5 +1,6 @@
 import {
     cellToText,
+    cellToRaw,
     isObject
 } from "../helpers"
 
@@ -51,7 +52,7 @@ export const exportTXT = function(dt, userOptions) {
     let rows = [headers]
     rows = rows.concat(selectedRows.map((row) => {
         const shownCells = [...row.children].filter((_cell, index) => columnShown(index))
-        return shownCells.map((cell) => cellToText(cell))
+        return shownCells.map((cell) => options.cellValues === "raw" ? cellToRaw(cell) : cellToText(cell))
     }))
 
     // Only proceed if we have data

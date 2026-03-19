@@ -1,5 +1,6 @@
 import {
     cellToText,
+    cellToRaw,
     isObject
 } from "../helpers"
 
@@ -48,7 +49,7 @@ export const exportJSON = function(dt, userOptions) {
 
     const rows = selectedRows.map((row) => {
         const shownCells = [...row.children].filter((_cell, index) => columnShown(index))
-        return shownCells.map((cell) => cellToText(cell))
+        return shownCells.map((cell) => options.cellValues === "raw" ? cellToRaw(cell) : cellToText(cell))
     })
 
     const headers = dt.headings.filter((_heading, index) => columnShown(index)).map((header) => header.text ?? header.data ?? header.innerText)

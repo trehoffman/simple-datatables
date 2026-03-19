@@ -136,28 +136,19 @@ export const truncate = (a, b, c, d, ellipsis) => {
     return i
 }
 
-export const objToText = (obj) => {
+export const objToText = obj => {
     if (["#text", "#comment"].includes(obj.nodeName)) {
         return (obj).data
     }
     if (obj.childNodes) {
-        return obj.childNodes.map((childNode) => objToText(childNode)).join("")
+        return obj.childNodes.map(childNode => objToText(childNode)).join("")
     }
     return ""
 }
 
-export const cellToText = (obj) => {
-    if (obj === null || obj === undefined) {
-        return ""
-    } else if (obj.hasOwnProperty("text") || obj.hasOwnProperty("data")) {
-        const cell = obj
-        return cell.text ?? cellToText(cell.data)
-    } else if (obj.hasOwnProperty("nodeName")) {
-        return objToText(obj)
-    }
-    return String(obj)
-}
+export const cellToText = obj => String(obj.textContent || obj.innerText || obj.innerHTML)
 
+export const cellToRaw = obj => String(obj.innerHTML || obj.textContent || obj.innerText)
 
 export const escapeText = function(text) {
     return text
@@ -217,11 +208,13 @@ export const namedNodeMapToObject = function(map) {
  *
  * @param classNames The class names to convert. Can contain multiple classes separated by spaces.
  */
-export const classNamesToSelector = (classNames) => {
+export const classNamesToSelector = classNames => {
     if (!classNames) {
         return null
     }
-    return classNames.trim().split(" ").map(className => `.${className}`).join("")
+    return classNames.trim().split(" ")
+        .map(className => `.${className}`)
+        .join("")
 }
 
 /**
